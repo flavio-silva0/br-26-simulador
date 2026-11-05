@@ -4,14 +4,13 @@
 // Tela intermediária. Nenhuma tabela é construída/exibida enquanto o apito final não tocar.
 let revealTimer=null;
 function simReveal(){
-  const pieces=Array.from({length:38},(_,i)=>`<i style="--left:${(i*37)%100}%;--delay:${-((i*67)%360)/100}s;--dur:${2.6+(i%8)*.28}s;--rot:${(i*91)%360}deg;--drift:${(i%2?1:-1)*(30+(i%6)*18)}px;--particle:${['#cbf57b','#58dfaa','#e3fdf4','#f5d37a'][i%4]}"></i>`).join('');
-  return `<div class="sim-reveal-screen" aria-live="polite"><div class="reveal-light a"></div><div class="reveal-light b"></div><div class="reveal-confetti" aria-hidden="true">${pieces}</div><div class="reveal-live">CENTRAL DE RESULTADOS · AO VIVO NO SEU UNIVERSO</div><div class="reveal-orbit" aria-hidden="true"><span class="reveal-big" id="reveal-number">3</span></div><h3 id="reveal-heading">APITO FINAL.<br><em>É HORA DA VERDADE.</em></h3><p id="reveal-description">Conferindo os 44 palpites e fechando a classificação, sem revelar nada antes da hora.</p><div class="reveal-meter"><div class="reveal-meter-label"><span id="reveal-step">FINALIZANDO PARTIDAS</span><b id="reveal-percent">0%</b></div><div class="reveal-track"><div class="reveal-fill" id="reveal-fill"></div></div></div></div>`;
+  return `<div class="sim-reveal-screen" aria-live="polite"><div class="reveal-live">44 palpites concluídos</div><span class="reveal-big" id="reveal-number" aria-hidden="true">3</span><h3 id="reveal-heading">Preparando sua tabela</h3><p id="reveal-description">Os pontos e os critérios de desempate definem a classificação final.</p><div class="reveal-meter"><div class="reveal-meter-label"><span id="reveal-step">Somando os pontos</span><b id="reveal-percent">0%</b></div><div class="reveal-track"><div class="reveal-fill" id="reveal-fill"></div></div></div></div>`;
 }
 function startRevealSequence(){
   if(revealTimer)clearInterval(revealTimer);
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration=reduce?650:3800,started=performance.now();
-  const states=[['3','FINALIZANDO PARTIDAS'],['2','APURANDO OS PONTOS'],['1','DECIDINDO O CAMPEÃO E O Z4'],['✓','TABELA PRONTA PARA REVELAÇÃO']];
+  const duration=reduce?250:1200,started=performance.now();
+  const states=[['3','Somando os pontos'],['2','Conferindo os resultados'],['1','Aplicando os desempates'],['✓','Tabela pronta']];
   function step(){
     if(game.phase!=='reveal'){clearInterval(revealTimer);revealTimer=null;return;}
     const progress=Math.min(1,(performance.now()-started)/duration),pos=Math.min(3,Math.floor(progress*4));
@@ -68,37 +67,35 @@ async function makeShareArtwork(format){
   const teamImgs=await Promise.all(rows.map(t=>loadAsset(t.name))),leagueImg=await loadAsset('league');
   const imap=Object.fromEntries(rows.map((t,i)=>[t.name,teamImgs[i]]));
   if(document.fonts?.ready)await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,800))]);
-  // Stadium-lit background and architectural accents
-  c.fillStyle='#080f19';c.fillRect(0,0,W,H);
-  const grd=c.createLinearGradient(0,0,W,H);grd.addColorStop(0,'#17342c');grd.addColorStop(.32,'#101f2c');grd.addColorStop(1,'#07101b');c.fillStyle=grd;c.fillRect(0,0,W,story?390:280);
-  const glow=c.createRadialGradient(870,75,0,870,75,480);glow.addColorStop(0,'rgba(202,245,107,.20)');glow.addColorStop(1,'rgba(202,245,107,0)');c.fillStyle=glow;c.fillRect(0,0,W,590);
-  c.fillStyle='#c9f56b';c.fillRect(0,0,W,10);
-  c.strokeStyle='rgba(209,244,202,.04)';c.lineWidth=1;for(let x=0;x<W;x+=34){c.beginPath();c.moveTo(x,0);c.lineTo(x-150,H);c.stroke()}
+  // Solid background keeps the table readable when shared at smaller sizes.
+  c.fillStyle='#141817';c.fillRect(0,0,W,H);
+  c.fillStyle='#1c2420';c.fillRect(0,0,W,story?366:263);
+  c.fillStyle='#b9dc78';c.fillRect(64,0,88,6);
   const titleY=story?138:108;
   c.textBaseline='alphabetic';c.textAlign='left';
-  c.fillStyle='#c8f56e';c.font='800 24px Manrope, Arial';c.fillText('BR26  /  MODO TORCEDOR',64,story?69:53);
-  c.fillStyle='#fff';c.font=`800 ${story?66:57}px "Space Grotesk", Arial`;c.fillText('MINHA TABELA FINAL',64,titleY);
-  c.fillStyle='#b6cdcb';c.font=`700 ${story?25:23}px Manrope, Arial`;c.fillText('BRASILEIRÃO SÉRIE A · 2026',64,titleY+(story?47:37));
+  c.fillStyle='#c8f56e';c.font='800 24px Arial, Arial';c.fillText('BR26  /  MODO TORCEDOR',64,story?69:53);
+  c.fillStyle='#fff';c.font=`800 ${story?66:57}px Arial, Arial`;c.fillText('MINHA TABELA FINAL',64,titleY);
+  c.fillStyle='#b6cdcb';c.font=`700 ${story?25:23}px Arial, Arial`;c.fillText('BRASILEIRÃO SÉRIE A · 2026',64,titleY+(story?47:37));
   const logoSize=story?122:99;
   if(!paintLogo(c,leagueImg,W-64-logoSize,story?62:39,logoSize,logoSize)){
-    c.fillStyle='#c9f56b';c.font='800 38px "Space Grotesk",Arial';c.fillText('SÉRIE A',W-260,story?100:80)
+    c.fillStyle='#c9f56b';c.font='800 38px Arial,Arial';c.fillText('SÉRIE A',W-260,story?100:80)
   }
   // Personal fan card
   const fy=story?239:175,fh=story?99:73;
   canvasRound(c,64,fy,W-128,fh,18);c.fillStyle='#1b3132';c.fill();c.strokeStyle='#b4f36d65';c.lineWidth=2;c.stroke();
   paintLogo(c,imap[game.favorite],84,fy+10,story?75:53,story?78:54);
-  c.fillStyle='#9dd3c0';c.font=`800 ${story?19:15}px Manrope,Arial`;c.fillText('EU TORÇO PELO',story?177:154,fy+(story?35:27));
-  c.font=`850 ${story?30:25}px Manrope,Arial`;c.fillStyle='#f5f9f6';c.fillText(game.favorite.toUpperCase(),story?177:154,fy+(story?70:54));
-  c.textAlign='right';c.fillStyle='#c9f56b';c.font=`800 ${story?42:33}px "Space Grotesk",Arial`;c.fillText(favPos+'º',W-90,fy+(story?51:44));
-  c.fillStyle='#b7d7c3';c.font=`750 ${story?17:15}px Manrope,Arial`;c.fillText(favorite.pts+' PONTOS',W-90,fy+(story?78:62));c.textAlign='left';
+  c.fillStyle='#9dd3c0';c.font=`800 ${story?19:15}px Arial,Arial`;c.fillText('EU TORÇO PELO',story?177:154,fy+(story?35:27));
+  c.font=`850 ${story?30:25}px Arial,Arial`;c.fillStyle='#f5f9f6';c.fillText(game.favorite.toUpperCase(),story?177:154,fy+(story?70:54));
+  c.textAlign='right';c.fillStyle='#c9f56b';c.font=`800 ${story?42:33}px Arial,Arial`;c.fillText(favPos+'º',W-90,fy+(story?51:44));
+  c.fillStyle='#b7d7c3';c.font=`750 ${story?17:15}px Arial,Arial`;c.fillText(favorite.pts+' PONTOS',W-90,fy+(story?78:62));c.textAlign='left';
   // Shared standings banner
   const tblY=story?382:282;
-  c.font=`850 ${story?24:19}px Manrope,Arial`;c.fillStyle='#ffffff';c.fillText('CLASSIFICAÇÃO FINAL',64,tblY);
-  c.textAlign='right';c.fillStyle='#97b3b0';c.font=`650 ${story?17:14}px Manrope,Arial`;c.fillText('38 RODADAS · 20 CLUBES',W-64,tblY);c.textAlign='left';
+  c.font=`850 ${story?24:19}px Arial,Arial`;c.fillStyle='#ffffff';c.fillText('CLASSIFICAÇÃO FINAL',64,tblY);
+  c.textAlign='right';c.fillStyle='#97b3b0';c.font=`650 ${story?17:14}px Arial,Arial`;c.fillText('38 RODADAS · 20 CLUBES',W-64,tblY);c.textAlign='left';
   const headY=tblY+17,headH=story?49:35,rowH=story?70:47,rowStart=headY+headH;
   canvasRound(c,64,headY,W-128,headH,9);c.fillStyle='#20363f';c.fill();
   const cols=[{t:'POS',x:83},{t:'CLUBE',x:189},{t:'PTS',x:596},{t:'J',x:655},{t:'V',x:710},{t:'E',x:765},{t:'D',x:815},{t:'GP',x:874},{t:'GC',x:926},{t:'SG',x:997}];
-  c.font=`800 ${story?17:13}px Manrope,Arial`;c.fillStyle='#c1d7d0';c.textBaseline='middle';
+  c.font=`800 ${story?17:13}px Arial,Arial`;c.fillStyle='#c1d7d0';c.textBaseline='middle';
   cols.forEach(({t,x},i)=>{if(i<2){c.textAlign='left';c.fillText(t,x,headY+headH/2)}else{c.textAlign='right';c.fillText(t,x,headY+headH/2)}});c.textAlign='left';
   rows.forEach((t,i)=>{
     const y=rowStart+i*rowH,z4=i>=16,g4=i<4,selected=t.name===game.favorite;
@@ -106,17 +103,17 @@ async function makeShareArtwork(format){
     c.fillStyle=background;c.fillRect(64,y,W-128,rowH-1);
     c.fillStyle=g4?'#c9f56b':z4?'#ff7383':selected?'#82dbaa':'#3a5864';c.fillRect(64,y,4,rowH-1);
     if(selected){c.strokeStyle='#c9f56b85';c.lineWidth=1;c.strokeRect(64,y,W-128,rowH-1)}
-    c.textBaseline='middle';c.textAlign='left';c.font=`800 ${story?23:18}px "Space Grotesk",Arial`;c.fillStyle=g4?'#d7f9a3':z4?'#ff9bac':'#acbfce';c.fillText(String(i+1).padStart(2,'0'),82,y+rowH/2);
+    c.textBaseline='middle';c.textAlign='left';c.font=`800 ${story?23:18}px Arial,Arial`;c.fillStyle=g4?'#d7f9a3':z4?'#ff9bac':'#acbfce';c.fillText(String(i+1).padStart(2,'0'),82,y+rowH/2);
     const logoBox=story?38:27; if(!paintLogo(c,imap[t.name],137,y+(rowH-logoBox)/2,logoBox,logoBox)){
-      c.fillStyle='#8dab91';c.font=`850 ${story?16:12}px Manrope,Arial`;c.fillText((META[t.name]||[])[3]||t.name.slice(0,3),139,y+rowH/2);
+      c.fillStyle='#8dab91';c.font=`850 ${story?16:12}px Arial,Arial`;c.fillText((META[t.name]||[])[3]||t.name.slice(0,3),139,y+rowH/2);
     }
-    c.fillStyle='#f3f8f9';c.font=`750 ${story?21:17}px Manrope,Arial`;
+    c.fillStyle='#f3f8f9';c.font=`750 ${story?21:17}px Arial,Arial`;
     fitText(c,t.name,story?335:343,story?16:13);c.fillText(t.name,story?189:183,y+rowH/2);
     c.textAlign='right';
     const valList=[t.pts,t.played,t.wins,t.draws,t.losses,t.gf,t.ga,(t.gd>0?'+':'')+t.gd];
     const xs=[596,655,710,765,815,874,926,997];
     valList.forEach((v,j)=>{
-      c.font=`${j===0?'850':'650'} ${story?(j===0?25:19):(j===0?19:15)}px ${j===0?'"Space Grotesk",Arial':'Manrope,Arial'}`;
+      c.font=`${j===0?'850':'650'} ${story?(j===0?25:19):(j===0?19:15)}px ${j===0?'Arial,Arial':'Arial,Arial'}`;
       c.fillStyle=j===0?'#d6f99a':(j===7&&t.gd<0?'#f8a0a7':'#c3d4d7');c.fillText(String(v),xs[j],y+rowH/2);
     });c.textAlign='left';
   });
@@ -126,7 +123,7 @@ async function updateSharePreview(format){
   shareState.format=format;shareState.busy=true;shareState.blob=null;
   document.querySelectorAll('[data-share-format]').forEach(b=>b.classList.toggle('active',b.dataset.shareFormat===format));
   const frame=document.querySelector('.share-preview-shell');frame?.classList.toggle('is-feed',format==='feed');
-  const status=document.getElementById('share-preview-status');status.hidden=false;status.innerHTML='<span class="share-loader"></span>Preparando os 20 clubes…';
+  const status=document.getElementById('share-preview-status');status.hidden=false;status.innerHTML='<span class="share-loader"></span>Gerando imagem…';
   document.querySelectorAll('[data-share-platform]').forEach(b=>b.disabled=true);
   try{
     const blob=await makeShareArtwork(format);
@@ -158,7 +155,7 @@ function saveShareImage(){
 async function copyShareCaption(){
   const text=shareDescription();
   try{await navigator.clipboard.writeText(text)}catch(_){const field=document.createElement('textarea');field.value=text;document.body.appendChild(field);field.select();document.execCommand('copy');field.remove()}
-  toast('Convite copiado! Cole na sua rede ou grupo.');
+  toast('Mensagem copiada.');
 }
 function canShareFile(){if(!shareState.blob||typeof navigator.canShare!=='function'||typeof navigator.share!=='function')return false;try{return navigator.canShare({files:[pngFile()]})}catch(_){return false}}
 function sendNativeShare(platform){
