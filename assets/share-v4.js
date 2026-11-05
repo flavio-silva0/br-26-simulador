@@ -30,7 +30,7 @@ function finishReveal(){
 function startRevealSequence(){
   if(revealTimer)clearInterval(revealTimer);
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration=reduce?350:4300,started=performance.now();let previous=-1;
+  const duration=reduce?350:7000,started=performance.now();let previous=-1;
   const states=[
     ['3','Últimos lances','A rodada está acabando.','Seu time já entrou em campo. Falta conhecer a tabela.'],
     ['2','Fechando os resultados','Quem levou o título?','Cada resultado conta na disputa pelas primeiras posições.'],
