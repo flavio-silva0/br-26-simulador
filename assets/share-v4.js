@@ -4,28 +4,56 @@
 // Tela intermediária. Nenhuma tabela é construída/exibida enquanto o apito final não tocar.
 let revealTimer=null;
 function simReveal(){
-  return `<div class="sim-reveal-screen" aria-live="polite"><div class="reveal-live">44 palpites concluídos</div><span class="reveal-big" id="reveal-number" aria-hidden="true">3</span><h3 id="reveal-heading">Preparando sua tabela</h3><p id="reveal-description">Os pontos e os critérios de desempate definem a classificação final.</p><div class="reveal-meter"><div class="reveal-meter-label"><span id="reveal-step">Somando os pontos</span><b id="reveal-percent">0%</b></div><div class="reveal-track"><div class="reveal-fill" id="reveal-fill"></div></div></div></div>`;
+  return `<div class="sim-reveal-screen match-finale">
+    <div class="finale-floodlight finale-floodlight-left" aria-hidden="true"></div><div class="finale-floodlight finale-floodlight-right" aria-hidden="true"></div>
+    <div class="finale-scoreboard"><span>BRASILEIRÃO 2026</span><span>38ª RODADA <b>90:00</b></span></div>
+    <div class="finale-club" aria-hidden="true">${crest(game.favorite,'lg')}</div>
+    <div class="finale-countdown" aria-hidden="true"><span id="reveal-number">3</span></div>
+    <div class="finale-copy"><div class="finale-eyebrow">44 palpites. Um campeonato.</div><h3 id="reveal-heading" aria-live="polite" aria-atomic="true">A rodada está acabando.</h3><p id="reveal-description">Seu time já entrou em campo. Falta conhecer a tabela.</p></div>
+    <div class="reveal-meter"><div class="reveal-meter-label"><span id="reveal-step">Últimos lances</span><b id="reveal-percent" aria-hidden="true">0%</b></div><div class="reveal-track" aria-hidden="true"><div class="reveal-fill" id="reveal-fill"></div></div></div>
+    <div class="finale-pitch" aria-hidden="true"><span></span></div>
+    <button type="button" class="finale-skip" data-reveal-skip>Ver tabela agora <span aria-hidden="true">→</span></button>
+  </div>`;
+}
+function finishReveal(){
+  if(revealTimer)clearInterval(revealTimer);revealTimer=null;
+  if(game.phase!=='reveal')return;
+  game.phase='result';saveGame();renderSimulation();
+  const result=document.getElementById('sim-result');
+  result?.classList.add('sim-result-arriving');
+  setTimeout(()=>result?.classList.remove('sim-result-arriving'),1600);
+  if(page==='simulation'){
+    window.scrollTo({top:0,behavior:'instant'});
+    const heading=result?.querySelector('h3');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}
+  }
 }
 function startRevealSequence(){
   if(revealTimer)clearInterval(revealTimer);
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration=reduce?250:1200,started=performance.now();
-  const states=[['3','Somando os pontos'],['2','Conferindo os resultados'],['1','Aplicando os desempates'],['✓','Tabela pronta']];
+  const duration=reduce?350:4300,started=performance.now();let previous=-1;
+  const states=[
+    ['3','Últimos lances','A rodada está acabando.','Seu time já entrou em campo. Falta conhecer a tabela.'],
+    ['2','Fechando os resultados','Quem levou o título?','Cada resultado conta na disputa pelas primeiras posições.'],
+    ['1','Últimos segundos','E quem ficou no Z4?','É hora de descobrir como terminaram os 20 clubes.'],
+    ['FIM','Apito final','Fim de campeonato.','Sua classificação está pronta.']
+  ];
   function step(){
     if(game.phase!=='reveal'){clearInterval(revealTimer);revealTimer=null;return;}
     const progress=Math.min(1,(performance.now()-started)/duration),pos=Math.min(3,Math.floor(progress*4));
-    const [num,label]=states[pos];
-    const n=document.getElementById('reveal-number'),p=document.getElementById('reveal-percent'),b=document.getElementById('reveal-fill'),t=document.getElementById('reveal-step');
-    if(!n||!b)return;
-    n.textContent=num;t.textContent=label;p.textContent=Math.round(progress*100)+'%';b.style.width=(progress*100)+'%';
-    if(progress===1){
-      clearInterval(revealTimer);revealTimer=null;
-      // A classificação só é calculada no momento da revelação efetiva.
-      game.phase='result';saveGame();renderSimulation();
-      const y=document.getElementById('view-simulation');if(y&&page==='simulation') window.scrollTo({top:0,behavior:'instant'});
+    const n=document.getElementById('reveal-number'),p=document.getElementById('reveal-percent'),bar=document.getElementById('reveal-fill');
+    if(!n||!bar){clearInterval(revealTimer);revealTimer=null;return;}
+    if(pos!==previous){
+      const [number,label,title,description]=states[pos];
+      n.textContent=number;document.getElementById('reveal-step').textContent=label;
+      document.getElementById('reveal-heading').textContent=reduce?'Sua classificação está pronta.':title;
+      document.getElementById('reveal-description').textContent=description;
+      n.closest('.match-finale').dataset.beat=String(pos);
+      previous=pos;
     }
+    p.textContent=Math.round(progress*100)+'%';bar.style.width=(progress*100)+'%';
+    if(progress===1)finishReveal();
   }
-  step();revealTimer=setInterval(step,60);
+  step();revealTimer=setInterval(step,50);
 }
 
 const shareState={format:'story',blob:null,previewURL:null,busy:false,closeFocus:null,key:null,assets:new Map()};
@@ -202,6 +230,7 @@ function shareToPlatform(kind){
   }
 }
 document.addEventListener('click',e=>{
+  if(e.target.closest('[data-reveal-skip]')){finishReveal();return;}
   if(e.target.id==='share-overlay'){closeShare();return}
   const closer=e.target.closest('[data-share-close]');if(closer){closeShare();return}
   const format=e.target.closest('[data-share-format]');if(format){if(format.dataset.shareFormat!==shareState.format)updateSharePreview(format.dataset.shareFormat);return}
