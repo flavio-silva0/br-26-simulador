@@ -38,7 +38,7 @@ function publicHost(){return sitePublicUrl()?location.host:'SEU LINK NA VERCEL';
 function shareText(){
   const r=computeFinal();if(!r)return '';
   const p=r.rows.findIndex(t=>t.name===game.favorite)+1,fan=r.rows[p-1];
-  return `⚽ EU MONTEI MINHA TABELA DO BRASILEIRÃO 2026!\n\n🏆 Meu campeão: ${r.rows[0].name}.\n🔥 Meu ${game.favorite} terminou em ${p}º, com ${fan.pts} pontos.\n\n👀 E aí, concorda? Faça seus palpites nos 44 jogos, sem ver a classificação, e me manda o seu resultado!\n\n${sitePublicUrl()?`👉 Jogue também: ${sitePublicUrl()}`:'👉 Jogue também no BR26 (link disponível após publicar na Vercel)'}\n\n📸 Minha classificação completa está na imagem!`;
+  return `⚽ EU MONTEI MINHA TABELA DO BRASILEIRÃO 2026!\n\n🏆 Meu campeão: ${r.rows[0].name}.\n🔥 Meu ${game.favorite} terminou em ${p}º, com ${fan.pts} pontos.\n\n${sitePublicUrl()?`👉 Jogue também: ${sitePublicUrl()}`:'👉 Jogue também no BR26 (link disponível após publicar na Vercel)'}`;
 }
 function shareDescription(){return document.getElementById('share-caption')?.value||shareText();}
 function canvasRound(ctx,x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
@@ -47,8 +47,8 @@ function fillRight(ctx,text,x,y){ctx.textAlign='right';ctx.fillText(String(text)
 function paintLogo(ctx,img,x,y,w,h){if(!img)return false;try{const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;if(!iw||!ih)return false;const s=Math.min(w/iw,h/ih);ctx.drawImage(img,x+(w-iw*s)/2,y+(h-ih*s)/2,iw*s,ih*s);return true}catch(_){return false}}
 function loadAsset(id){
   if(shareState.assets.has(id))return shareState.assets.get(id);
-  const path=id==='league'?'/api/crest?id=league':crestPath(id);
-  const url=location.protocol==='file:'?(id==='league'?LEAGUE_REMOTE:crestRemote(id)):path;
+  const path=id==='league'?'assets/brasileirao-serie-a-2026.svg':crestPath(id);
+  const url=location.protocol==='file:'&&id!=='league'?crestRemote(id):path;
   const promise=new Promise(resolve=>{
     const img=new Image();img.crossOrigin='anonymous';
     const timeout=setTimeout(()=>{img.onload=null;img.onerror=null;resolve(null)},7000);
@@ -61,8 +61,9 @@ function loadAsset(id){
 async function makeShareArtwork(format){
   const result=computeFinal();if(!result)throw new Error('Ainda não existe tabela completa.');
   const story=format==='story';const W=1080,H=story?1920:1350;
-  const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+  const canvas=document.createElement('canvas');const scale=2;canvas.width=W*scale;canvas.height=H*scale;
   const c=canvas.getContext('2d',{alpha:false});
+  c.scale(scale,scale);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   const rows=result.rows,favPos=rows.findIndex(x=>x.name===game.favorite)+1,favorite=rows[favPos-1];
   const teamImgs=await Promise.all(rows.map(t=>loadAsset(t.name))),leagueImg=await loadAsset('league');
   const imap=Object.fromEntries(rows.map((t,i)=>[t.name,teamImgs[i]]));
@@ -94,7 +95,7 @@ async function makeShareArtwork(format){
   const tblY=story?382:282;
   c.font=`850 ${story?24:19}px Manrope,Arial`;c.fillStyle='#ffffff';c.fillText('CLASSIFICAÇÃO FINAL',64,tblY);
   c.textAlign='right';c.fillStyle='#97b3b0';c.font=`650 ${story?17:14}px Manrope,Arial`;c.fillText('38 RODADAS · 20 CLUBES',W-64,tblY);c.textAlign='left';
-  const headY=tblY+17,headH=story?49:35,rowH=story?58:41,rowStart=headY+headH;
+  const headY=tblY+17,headH=story?49:35,rowH=story?70:47,rowStart=headY+headH;
   canvasRound(c,64,headY,W-128,headH,9);c.fillStyle='#20363f';c.fill();
   const cols=[{t:'POS',x:83},{t:'CLUBE',x:189},{t:'PTS',x:596},{t:'J',x:655},{t:'V',x:710},{t:'E',x:765},{t:'D',x:815},{t:'GP',x:874},{t:'GC',x:926},{t:'SG',x:997}];
   c.font=`800 ${story?17:13}px Manrope,Arial`;c.fillStyle='#c1d7d0';c.textBaseline='middle';
@@ -119,17 +120,6 @@ async function makeShareArtwork(format){
       c.fillStyle=j===0?'#d6f99a':(j===7&&t.gd<0?'#f8a0a7':'#c3d4d7');c.fillText(String(v),xs[j],y+rowH/2);
     });c.textAlign='left';
   });
-  c.textBaseline='alphabetic';
-  const footerY=rowStart+20*rowH+(story?24:21);
-  c.fillStyle='#c9f56b';c.fillRect(64,footerY,W-128,2);
-  c.fillStyle='#fbfcfa';c.font=`800 ${story?24:19}px "Space Grotesk",Arial`;
-  c.fillText('A SUA TABELA SERIA ASSIM?',64,footerY+(story?54:40));
-  c.fillStyle='#b4d2c7';c.font=`700 ${story?20:16}px Manrope,Arial`;
-  c.fillText('Faça seus 44 palpites e desafie a torcida!',64,footerY+(story?87:69));
-  c.fillStyle='#c9f56b';c.font=`800 ${story?23:18}px Manrope,Arial`;
-  const host=publicHost();c.fillText(host,64,footerY+(story?125:96));
-  c.fillStyle='#7d9c9f';c.font=`500 ${story?15:12}px Manrope,Arial`;
-  c.fillText('Simulação fictícia • Base 05/11/2026 • Não oficial',64,Math.min(H-35,footerY+(story?165:123)));
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Seu navegador não gerou o PNG.')),'image/png'));
 }
 async function updateSharePreview(format){
