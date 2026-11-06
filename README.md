@@ -19,7 +19,7 @@ O progresso fica salvo no navegador. Não é necessário criar uma conta.
 
 A base usa a classificação e o calendário de **6 de novembro de 2026, após os jogos de 5 de novembro**, com 42 partidas por disputar. Os dados são estáticos: o site não acompanha resultados em tempo real.
 
-As projeções e chances de queda vêm de uma base de 250 mil temporadas simuladas por Monte Carlo. A aba Classificação mostra um cenário com pontos inteiros. As faixas de pontos e os riscos são informações estatísticas dessa base, não garantias de resultado.
+As projeções e chances de queda vêm de uma base de 250 mil temporadas simuladas por Monte Carlo. A aba Classificação ordena os clubes pelos pontos médios dessas simulações, exibidos com uma casa decimal. As faixas de pontos e os riscos são informações estatísticas dessa base, não garantias de resultado.
 
 No simulador, cada palpite define vitória do mandante, empate ou vitória do visitante. O site gera um placar compatível com a escolha para calcular gols e desempates. A ordem considera pontos, vitórias, saldo de gols e gols marcados; se ainda houver empate, a ordem é aproximada. Esses placares são fictícios.
 
