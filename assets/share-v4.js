@@ -9,7 +9,7 @@ function simReveal(){
     <div class="finale-scoreboard"><span>BRASILEIRÃO 2026</span><span>38ª RODADA <b>90:00</b></span></div>
     <div class="finale-club" aria-hidden="true">${crest(game.favorite,'lg')}</div>
     <div class="finale-countdown" aria-hidden="true"><span id="reveal-number">3</span></div>
-    <div class="finale-copy"><div class="finale-eyebrow">44 palpites. Um campeonato.</div><h3 id="reveal-heading" aria-live="polite" aria-atomic="true">A rodada está acabando.</h3><p id="reveal-description">Seu time já entrou em campo. Falta conhecer a tabela.</p></div>
+    <div class="finale-copy"><div class="finale-eyebrow">42 palpites. Um campeonato.</div><h3 id="reveal-heading" aria-live="polite" aria-atomic="true">A rodada está acabando.</h3><p id="reveal-description">Seu time já entrou em campo. Falta conhecer a tabela.</p></div>
     <div class="reveal-meter"><div class="reveal-meter-label"><span id="reveal-step">Últimos lances</span><b id="reveal-percent" aria-hidden="true">0%</b></div><div class="reveal-track" aria-hidden="true"><div class="reveal-fill" id="reveal-fill"></div></div></div>
     <div class="finale-pitch" aria-hidden="true"><span></span></div>
     <button type="button" class="finale-skip" data-reveal-skip>Ver tabela agora <span aria-hidden="true">→</span></button>
