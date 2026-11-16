@@ -1,12 +1,12 @@
 # BR26 — Simulador do Brasileirão 2026
 
-Um simulador para dar palpites nos 42 jogos restantes da Série A e conferir como fica a classificação. A tabela só aparece depois do último palpite.
+Um simulador para dar palpites nos 39 jogos restantes da Série A e conferir como fica a classificação. A tabela só aparece depois do último palpite.
 
 [Abrir o site](https://brasileirao-2026-rho.vercel.app/)
 
 ## O que dá para fazer
 
-- Escolher um dos 20 clubes e preencher os resultados em seis etapas.
+- Escolher um dos 20 clubes e preencher os resultados em quatro etapas.
 - Revisar os palpites antes ou depois de ver a classificação.
 - Conferir pontos, vitórias, empates, derrotas, gols e saldo da tabela final.
 - Salvar a tabela em PNG ou compartilhar pelo celular.
@@ -17,13 +17,24 @@ O progresso fica salvo no navegador. Não é necessário criar uma conta.
 
 ## Como os resultados são calculados
 
-A base usa a classificação e o calendário de **6 de novembro de 2026, após os jogos de 5 de novembro**, com 42 partidas por disputar. Os dados são estáticos: o site não acompanha resultados em tempo real.
+A base usa a classificação e o calendário de **16 de novembro de 2026, após os jogos de 14 de novembro**, com 39 partidas por disputar. Os dados são estáticos: o site não acompanha resultados em tempo real.
 
 As projeções e chances de queda vêm de uma base de 250 mil temporadas simuladas por Monte Carlo. A aba Classificação ordena os clubes pelos pontos médios dessas simulações, exibidos com uma casa decimal. As faixas de pontos e os riscos são informações estatísticas dessa base, não garantias de resultado.
 
 No simulador, cada palpite define vitória do mandante, empate ou vitória do visitante. O site gera um placar compatível com a escolha para calcular gols e desempates. A ordem considera pontos, vitórias, saldo de gols e gols marcados; se ainda houver empate, a ordem é aproximada. Esses placares são fictícios.
 
-Resultados incorporados em 05/11: Palmeiras 6 × 1 Remo e Cruzeiro 3 × 2 Bahia. Pontos, gols e projeções foram recalculados; essas partidas não recebem novos palpites.
+Resultados incorporados: Palmeiras 6 × 1 Remo e Cruzeiro 3 × 2 Bahia (05/11); Vitória 0 × 3 Fluminense (06/11); Chapecoense 0 × 2 Vasco e Mirassol 0 × 0 Atlético-MG (14/11). Os 20 clubes foram conciliados com a tabela da CBF. Pontos, gols, faixas e riscos foram recalculados em 250 mil simulações; essas partidas não recebem novos palpites. As probabilidades individuais das partidas restantes foram preservadas da base anterior.
+
+O calendário da 37ª rodada segue a tabela detalhada da CBF publicada em 06/11, com jogos de 24 a 29/11. A atualização preserva os palpites salvos para partidas restantes por rodada, mandante e visitante, inclusive ao migrar as versões anteriores.
+
+## Atualizar e verificar
+
+```sh
+node scripts/update-results.mjs data/update-2026-11-16.json
+node --test scripts/validate.test.mjs
+```
+
+O arquivo de atualização registra resultados, fontes, calendário e classificação conferida. O comando recusa partidas desconhecidas e divergências com a classificação; reaplicá-lo não duplica pontos nem resultados.
 
 ## Compartilhamento
 

@@ -1,0 +1,45 @@
+{
+  "asof": "2026-11-16 · após os jogos de 14/11",
+  "seed": 20261116,
+  "standings_source": "https://www.cbf.com.br/futebol-brasileiro/tabelas/campeonato-brasileiro/serie-a/2026",
+  "schedule_source": "https://stcbfsiteprdimgbrs.blob.core.windows.net/img-site/cdn/Tabela_Detalhada_Brasileiro_Serie_A_2026_37_e_38_rodada_ca107fa561.pdf",
+  "results": [
+    {"home":"Vitória","away":"Fluminense","home_goals":0,"away_goals":3,"date":"2026-11-06","rodada":34,"source":"https://fluminense.com.br/noticia/fluminense-vence-o-vitoria-por-3-a-0-no-barradao"},
+    {"home":"Chapecoense","away":"Vasco","home_goals":0,"away_goals":2,"date":"2026-11-14","rodada":21,"source":"https://chapecoense.com/2026/11/15/chapecoense-e-superada-pelo-vasco-2/"},
+    {"home":"Mirassol","away":"Atlético-MG","home_goals":0,"away_goals":0,"date":"2026-11-14","rodada":35,"source":"https://www.cbf.com.br/futebol-brasileiro/noticias/campeonato-brasileiro-serie-a/a/brasileirao-35-rodada-comeca-com-empate-sem-gols-entre-mirassol-e-galo"}
+  ],
+  "schedule": [
+    {"rodada":37,"home":"Chapecoense","away":"Palmeiras","date":"2026-11-24"},
+    {"rodada":37,"home":"São Paulo","away":"Remo","date":"2026-11-26"},
+    {"rodada":37,"home":"Fluminense","away":"Cruzeiro","date":"2026-11-27"},
+    {"rodada":37,"home":"Botafogo","away":"Bahia","date":"2026-11-28"},
+    {"rodada":37,"home":"Coritiba","away":"Flamengo","date":"2026-11-29"},
+    {"rodada":37,"home":"Vitória","away":"Santos","date":"2026-11-29"},
+    {"rodada":37,"home":"Corinthians","away":"Grêmio","date":"2026-11-29"},
+    {"rodada":37,"home":"Mirassol","away":"Athletico-PR","date":"2026-11-29"},
+    {"rodada":37,"home":"Internacional","away":"Bragantino","date":"2026-11-29"},
+    {"rodada":37,"home":"Atlético-MG","away":"Vasco","date":"2026-11-29"}
+  ],
+  "current": [
+    ["Flamengo",76,34,23,7,4,71,29],
+    ["Palmeiras",73,34,21,10,3,62,23],
+    ["Cruzeiro",60,34,18,6,10,55,48],
+    ["Fluminense",57,34,16,9,9,55,42],
+    ["Athletico-PR",54,34,15,9,10,51,43],
+    ["Bahia",53,34,14,11,9,50,45],
+    ["Atlético-MG",51,35,14,9,12,44,40],
+    ["Bragantino",47,34,13,8,13,44,39],
+    ["Santos",47,34,12,11,11,50,49],
+    ["São Paulo",44,34,12,8,14,39,39],
+    ["Vasco",44,34,12,8,14,45,50],
+    ["Botafogo",42,34,11,9,14,46,53],
+    ["Coritiba",42,34,11,9,14,40,51],
+    ["Mirassol",41,35,10,11,14,39,48],
+    ["Vitória",38,34,10,8,16,35,51],
+    ["Internacional",38,34,9,11,14,38,42],
+    ["Corinthians",37,34,9,10,15,36,42],
+    ["Grêmio",37,34,9,10,15,38,47],
+    ["Remo",29,34,6,11,17,37,57],
+    ["Chapecoense",21,34,4,9,21,33,70]
+  ]
+}
